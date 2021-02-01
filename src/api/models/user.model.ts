@@ -11,26 +11,40 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  first_name: {
-    type: String
+  firstName: {
+    type: String,
+    required: true
   },
-  last_name: {
-    type: String
+  lastName: {
+    type: String,
+    required: true
+  },
+  registrationTime: {
+    type: String,
+    required: true
   },
   rating: {
-    type: Number
+    type: Number,
+    required: true
   },
-  registered_date: {
-    type: String
+  countTrips: {
+    type: Number,
+    required: true
   },
-  count_trips: {
-    type: Number
+  countDelivered: {
+    type: Number,
+    required: true
   },
-  count_delivered: {
-    type: Number
+  countSent: {
+    type: Number,
+    required: true
   },
-  count_sent: {
-    type: Number
+  posts: {
+    type: Array,
+    required: true
+  },
+  isAdmin: {
+    type: Boolean
   }
 });
 

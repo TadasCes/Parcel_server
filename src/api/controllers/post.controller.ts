@@ -1,9 +1,12 @@
-import mongoose from 'mongoose';
-import IPost from '../interfaces/IPost';
-import Posts from '../models/post.model';
+import moment from "moment";
+import mongoose from "mongoose";
+import IPost from "../interfaces/IPost";
+import Post from "../models/post.model";
+import { usersRouter } from "../routes/users.routes";
+import { getOneUser, assignPostToUser } from "../controllers/users.controller";
 
 async function getAllPosts() {
-  return await Posts.find({})
+  return await Post.find({})
     .then((result) => {
       return result;
     })
@@ -13,7 +16,7 @@ async function getAllPosts() {
 }
 
 async function getOnePost(id: string) {
-  return await Posts.findById(id)
+  return await Post.findById(id)
     .then((result) => {
       return result;
     })
@@ -22,20 +25,24 @@ async function getOnePost(id: string) {
     });
 }
 
-async function createPost(Post: IPost) {
-  return await Posts.create(Post)
-    .then(() => {
-      return 'Post created successfully!';
+async function createPost(newPost: IPost) {
+  console.log(newPost.author.id);
+  return await Post.create(newPost)
+    .then((post) => {
+      assignPostToUser(newPost.author.id, post.id).then(() => {
+        console.log("Post created successfully!");
+        return "Post created successfully!";
+      });
     })
     .catch((error) => {
       throw new Error(error);
     });
 }
 
-async function updatePost(id: string, Post: IPost) {
-  return await Posts.findOneAndUpdate({ _id: id }, Post)
+async function updatePost(id: string, post: IPost) {
+  return await Post.findOneAndUpdate({ _id: id }, Post)
     .then(() => {
-      return 'Post updated successfully!';
+      return "Post updated successfully!";
     })
     .catch((error) => {
       throw new Error(error);
@@ -43,9 +50,9 @@ async function updatePost(id: string, Post: IPost) {
 }
 
 async function deletePost(id: string) {
-  return await Posts.findOneAndRemove({ _id: id })
+  return await Post.findOneAndRemove({ _id: id })
     .then(() => {
-      return 'Post deleted successfully!';
+      return "Post deleted successfully!";
     })
     .catch((error) => {
       throw new Error(error);

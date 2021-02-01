@@ -2,28 +2,31 @@ import mongoose, { model, Schema } from "mongoose";
 import User from "./user.model";
 
 const PostSchema = new Schema({
-  city_start: {
+  cityStart: {
     type: String,
     required: true
   },
-  city_end: {
+  cityEnd: {
     type: String,
     required: true
   },
-  time_start: {
+  timeStart: {
     type: Date,
     required: true
   },
-  time_end: {
+  timeEnd: {
     type: Date,
     required: true
   },
   author: {
-    first_name: {
+    id: {
+      type: String
+    },
+    firstName: {
       type: String,
       required: true
     },
-    last_name: {
+    lastName: {
       type: String,
       required: true
     },
@@ -31,7 +34,7 @@ const PostSchema = new Schema({
       type: Number,
       required: true
     },
-    count_delivered: {
+    countDelivered: {
       type: Number,
       required: true
     }

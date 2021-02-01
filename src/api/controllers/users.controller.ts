@@ -3,6 +3,7 @@ import IRegistration from "../interfaces/IRegistration";
 import IUser from "../interfaces/IUser";
 import Users from "../models/user.model";
 import bcrypt from "bcrypt";
+import { postsRouter } from "../routes/posts.routes";
 
 async function getAllUsers() {
   return await Users.find({})
@@ -16,8 +17,8 @@ async function getAllUsers() {
 
 async function getOneUser(id: string) {
   return await Users.findById(id)
-    .then((result) => {
-      return result;
+    .then((user) => {
+      return user;
     })
     .catch((error) => {
       throw new Error(error);
@@ -25,18 +26,20 @@ async function getOneUser(id: string) {
 }
 
 async function createUser(user: IRegistration) {
-  let newUser = {}
+  let newUser = {};
   await bcrypt.hash(user.password, 8).then((hashedPassword) => {
     newUser = {
       email: user.email,
       password: hashedPassword,
-      first_name: user.firstName,
-      last_name: user.lastName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      registrationTime: Date.now(),
       rating: 0,
-      registered_date: Date.now(),
-      count_trips: 0,
-      count_delivered: 0,
-      count_sent: 0
+      countTrips: 0,
+      countDelivered: 0,
+      countSent: 0,
+      posts: [],
+      isAdmin: false
     };
   });
 
@@ -59,6 +62,16 @@ async function updateUser(id: string, user: IUser) {
     });
 }
 
+async function assignPostToUser(id: string, postId: string) {
+  return await Users.findOneAndUpdate({ _id: id }, { $push: { posts: postId } })
+    .then(() => {
+      return "Post assigned to the user";
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
 async function deleteUser(id: string) {
   return await Users.findOneAndRemove({ _id: id })
     .then(() => {
@@ -69,7 +82,7 @@ async function deleteUser(id: string) {
     });
 }
 
-export { getAllUsers, getOneUser, createUser, updateUser, deleteUser };
+export { getAllUsers, getOneUser, createUser, updateUser, assignPostToUser, deleteUser };
 
 // static findUser(name: string): User | undefined {
 //   const result = UserList.list.find((u) => u.name === name)

@@ -1,15 +1,17 @@
-import { Document } from 'mongoose';
+import { Document } from "mongoose";
 
 interface IUser extends Document {
-  email: string,
-  password: string,
-  first_name: string,
-  last_name: string,
-  rating: number,
-  registered_date: string,
-  count_trips: number,
-  count_delivered: number,
-  count_sent: number
-};
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  registeredDate: string;
+  rating: number;
+  countTrips: number;
+  countDelivered: number;
+  countSent: number;
+  posts: [];
+  isAdmin: boolean;
+}
 
-export default IUser
+export default IUser;
