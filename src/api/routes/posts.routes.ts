@@ -50,7 +50,7 @@ postsRouter.put("/:id", async (req, res, next) => {
   await updatePost(req.params.id, req.body);
   res.json({
     status: 200,
-    message: "Post created successfully!"
+    message: "Post updated successfully!"
   });
 });
 
@@ -58,6 +58,6 @@ postsRouter.delete("/:id", async (req, res, next) => {
   await deletePost(req.params.id);
   res.json({
     status: 200,
-    message: "Post created successfully!"
+    message: "Post deleted successfully!"
   });
 });

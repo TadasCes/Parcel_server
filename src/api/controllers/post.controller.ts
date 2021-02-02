@@ -40,7 +40,7 @@ async function createPost(newPost: IPost) {
 }
 
 async function updatePost(id: string, post: IPost) {
-  return await Post.findOneAndUpdate({ _id: id }, Post)
+  return await Post.findOneAndUpdate({ _id: id }, post)
     .then(() => {
       return "Post updated successfully!";
     })
