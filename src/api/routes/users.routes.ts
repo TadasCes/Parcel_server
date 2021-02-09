@@ -12,6 +12,7 @@ import {
 export const usersRouter = express.Router();
 
 usersRouter.get("/", async (req, res, next) => {
+  // test
   const users = await getAllUsers();
   if (!users || users.length === 0) {
     next(new HttpException(404, "There are no users"));
