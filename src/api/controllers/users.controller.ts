@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import IRegistration from "../interfaces/IRegistration";
+import HttpException from "../middleware/http.exception";
 import IUser from "../interfaces/IUser";
 import Users from "../models/user.model";
 import bcrypt from "bcrypt";
@@ -10,8 +11,8 @@ async function getAllUsers() {
     .then((result) => {
       return result;
     })
-    .catch((error) => {
-      throw new Error(error);
+    .catch(() => {
+      throw new HttpException(404, "No results");
     });
 }
 
@@ -20,36 +21,44 @@ async function getOneUser(id: string) {
     .then((user) => {
       return user;
     })
-    .catch((error) => {
-      throw new Error(error);
+    .catch(() => {
+      throw new HttpException(404, "No such user");
     });
 }
 
 async function createUser(user: IRegistration) {
-  let newUser = {};
-  await bcrypt.hash(user.password, 8).then((hashedPassword) => {
-    newUser = {
-      email: user.email,
-      password: hashedPassword,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      registrationTime: Date.now(),
-      rating: 0,
-      countTrips: 0,
-      countDelivered: 0,
-      countSent: 0,
-      posts: [],
-      isAdmin: false
-    };
+  return await checkIfEmailTaken(user.email).then(async (response) => {
+    if (!response) {
+      const newUser = {
+        email: user.email,
+        password: user.password,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        registrationTime: Date.now(),
+        rating: 0,
+        countTrips: 0,
+        countDelivered: 0,
+        countSent: 0,
+        posts: [],
+        isAdmin: false,
+      };
+      return await Users.create(newUser)
+        .then(() => {
+          return "User created successfully!";
+        })
+        .catch(() => {
+          throw new HttpException(400, "Email is already taken");
+        });
+    } else {
+      throw new HttpException(400, "User already exists");
+    }
   });
+}
 
-  return await Users.create(newUser)
-    .then(() => {
-      return "User created successfully!";
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
+async function checkIfEmailTaken(email: string) {
+  return await Users.findOne({ email: email }).then((user) => {
+    return user != null ? true : false;
+  });
 }
 
 async function updateUser(id: string, user: IUser) {
@@ -57,18 +66,18 @@ async function updateUser(id: string, user: IUser) {
     .then(() => {
       return "User updated successfully!";
     })
-    .catch((error) => {
-      throw new Error(error);
+    .catch(() => {
+      throw new HttpException(404, "No such user");
     });
 }
 
-async function assignPostToUser(id: string, postId: string) {
-  return await Users.findOneAndUpdate({ _id: id }, { $push: { posts: postId } })
+async function assignPostToUser(authorId: string, postId: string) {
+  await Users.findOneAndUpdate({ _id: authorId }, { $push: { posts: postId } })
     .then(() => {
       return "Post assigned to the user";
     })
-    .catch((error) => {
-      throw new Error(error);
+    .catch(() => {
+      throw new HttpException(404, "No such user");
     });
 }
 
@@ -77,12 +86,19 @@ async function deleteUser(id: string) {
     .then(() => {
       return "User deleted successfully!";
     })
-    .catch((error) => {
-      throw new Error(error);
+    .catch(() => {
+      throw new HttpException(404, "No such user");
     });
 }
 
-export { getAllUsers, getOneUser, createUser, updateUser, assignPostToUser, deleteUser };
+export {
+  getAllUsers,
+  getOneUser,
+  createUser,
+  updateUser,
+  assignPostToUser,
+  deleteUser,
+};
 
 // static findUser(name: string): User | undefined {
 //   const result = UserList.list.find((u) => u.name === name)

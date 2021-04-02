@@ -4,6 +4,7 @@ import IPost from "../interfaces/IPost";
 import Post from "../models/post.model";
 import { usersRouter } from "../routes/users.routes";
 import { getOneUser, assignPostToUser } from "../controllers/users.controller";
+import HttpException from "../middleware/http.exception";
 
 async function getAllPosts() {
   return await Post.find({})
@@ -11,8 +12,17 @@ async function getAllPosts() {
       return result;
     })
     .catch((error) => {
-      throw new Error(error);
+      throw new HttpException(404, "No results");
     });
+}
+
+async function getFilteredPosts(query: any) {
+  const result = await Post.aggregate([
+    {
+      $match: { cityStart: query.cityStart },
+    },
+  ]);
+  return result;
 }
 
 async function getOnePost(id: string) {
@@ -21,21 +31,25 @@ async function getOnePost(id: string) {
       return result;
     })
     .catch((error) => {
-      throw new Error(error);
+      throw new HttpException(404, "No such post");
     });
 }
 
 async function createPost(newPost: IPost) {
-  console.log(newPost.author.id);
-  return await Post.create(newPost)
-    .then((post) => {
-      assignPostToUser(newPost.author.id, post.id).then(() => {
-        console.log("Post created successfully!");
-        return "Post created successfully!";
-      });
+  console.log(newPost.authorId);
+  await Post.create(newPost)
+    .then(async (post) => {
+      await assignPostToUser(newPost.authorId, post.id)
+        .then((response) => {
+          console.log(response);
+          return "Post created successfully!";
+        })
+        .catch((error) => {
+          throw error;
+        });
     })
     .catch((error) => {
-      throw new Error(error);
+      throw error;
     });
 }
 
@@ -45,7 +59,7 @@ async function updatePost(id: string, post: IPost) {
       return "Post updated successfully!";
     })
     .catch((error) => {
-      throw new Error(error);
+      throw new HttpException(404, "No such user");
     });
 }
 
@@ -55,37 +69,15 @@ async function deletePost(id: string) {
       return "Post deleted successfully!";
     })
     .catch((error) => {
-      throw new Error(error);
+      throw new HttpException(404, "No such user");
     });
 }
 
-export { getAllPosts, getOnePost, createPost, updatePost, deletePost };
-
-// static findPost(name: string): Post | undefined {
-//   const result = PostList.list.find((u) => u.name === name)
-//   if (result === undefined) {
-//       return undefined
-//   } else {
-//       return result
-//   }
-// }
-
-// static addPassword(Post: Post, password: string): void {
-//   Post.password = password
-// }
-
-// static addEmail(Post: Post, email: string): void {
-//   Post.email = email
-// }
-
-// static addFriend(Post: Post, friend: string): void {
-//   Post.friendList.push(friend);
-// }
-
-// static areFriends(Post: Post, friend: string): boolean {
-//   if (Post.friendList.find(fr => fr === friend) === undefined) {
-//       return false
-//   } else {
-//       return true
-//   }
-// }
+export {
+  getAllPosts,
+  getOnePost,
+  createPost,
+  updatePost,
+  deletePost,
+  getFilteredPosts,
+};

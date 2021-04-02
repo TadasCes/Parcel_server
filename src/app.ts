@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import errorMiddleWare from "./api/middleware/http.messages";
 import { usersRouter } from "./api/routes/users.routes";
 import { postsRouter } from "./api/routes/posts.routes";
 import { authRouter } from "./api/routes/auth.routes";
@@ -11,7 +10,10 @@ import passport from "passport";
 import User from "./api/models/user.model";
 
 mongoose
-  .connect("mongodb://localhost:27017/siunta", { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect("mongodb://localhost:27017/siunta", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     // tslint:disable-next-line: no-console
     return console.log(`Successfully connected to mongo`);

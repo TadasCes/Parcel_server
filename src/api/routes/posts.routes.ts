@@ -1,63 +1,81 @@
 import * as express from "express";
-import HttpException from "../exceptions/exception";
+import { returnSuccess, returnError } from "../middleware/http.messages";
 import PostModel from "../models/post.model";
 import {
   getAllPosts,
   getOnePost,
   createPost,
   updatePost,
-  deletePost
+  deletePost,
+  getFilteredPosts,
 } from "../controllers/post.controller";
 
 export const postsRouter = express.Router();
 
+// Get all
 postsRouter.get("/", async (req, res, next) => {
-  const post = await getAllPosts();
-  if (!post || post.length === 0) {
-    next(new HttpException(404, "There are no post"));
-  } else {
-    res.json({
-      status: 200,
-      message: "OK",
-      result: post
+  await getAllPosts()
+    .then((response) => {
+      returnSuccess(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
     });
-  }
 });
 
+// Get one
 postsRouter.get("/:id", async (req, res, next) => {
-  const Post = await getOnePost(req.params.id);
-  if (!Post) {
-    next(new HttpException(404, "Post not found"));
-  } else {
-    res.json({
-      status: 200,
-      message: "OK",
-      result: Post
+  await getOnePost(req.params.id)
+    .then((response) => {
+      returnSuccess(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
     });
-  }
 });
 
+// Get filtered
+postsRouter.post("/filter", async (req, res, next) => {
+  await getFilteredPosts(req.body)
+    .then((response) => {
+      returnSuccess(response, res);
+    })
+    .catch((error) => {
+      console.log(error.message);
+      returnError(error, res);
+    });
+});
+
+// Create
 postsRouter.post("/", async (req, res, next) => {
-  await createPost(req.body).then(() => {
-    res.json({
-      status: 200,
-      message: "Post created successfully!"
+  await createPost(req.body)
+    .then((result) => {
+      returnSuccess(result, res);
+    })
+    .catch((error) => {
+      console.log(error);
+      returnError(error, res);
     });
-  });
 });
 
+// Update
 postsRouter.put("/:id", async (req, res, next) => {
-  await updatePost(req.params.id, req.body);
-  res.json({
-    status: 200,
-    message: "Post updated successfully!"
-  });
+  await updatePost(req.params.id, req.body)
+    .then((result) => {
+      returnSuccess(result, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
 });
 
+// Delete
 postsRouter.delete("/:id", async (req, res, next) => {
-  await deletePost(req.params.id);
-  res.json({
-    status: 200,
-    message: "Post deleted successfully!"
-  });
+  await deletePost(req.params.id)
+    .then((result) => {
+      returnSuccess(result, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
 });

@@ -6,13 +6,7 @@ interface IPost extends Document {
   cityFinish: string;
   timeStart: Date;
   timeEnd: Date;
-  author: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    rating: number;
-    countDelivered: number;
-  };
+  authorId: string;
 }
 
 export default IPost;
