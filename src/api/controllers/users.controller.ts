@@ -4,11 +4,15 @@ import HttpException from "../middleware/http.exception";
 import IUser from "../interfaces/IUser";
 import Users from "../models/user.model";
 import bcrypt from "bcrypt";
+import { hashPassword } from "../middleware/utils";
 import { postsRouter } from "../routes/posts.routes";
 
 async function getAllUsers() {
   return await Users.find({})
     .then((result) => {
+      if (!result) {
+        throw new HttpException(404, "No result");
+      }
       return result;
     })
     .catch(() => {
@@ -18,8 +22,11 @@ async function getAllUsers() {
 
 async function getOneUser(id: string) {
   return await Users.findById(id)
-    .then((user) => {
-      return user;
+    .then((result) => {
+      if (!result) {
+        throw new HttpException(404, "No result");
+      }
+      return result;
     })
     .catch(() => {
       throw new HttpException(404, "No such user");
@@ -27,32 +34,37 @@ async function getOneUser(id: string) {
 }
 
 async function createUser(user: IRegistration) {
-  return await checkIfEmailTaken(user.email).then(async (response) => {
-    if (!response) {
-      const newUser = {
-        email: user.email,
-        password: user.password,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        registrationTime: Date.now(),
-        rating: 0,
-        countTrips: 0,
-        countDelivered: 0,
-        countSent: 0,
-        posts: [],
-        isAdmin: false,
-      };
-      return await Users.create(newUser)
-        .then(() => {
-          return "User created successfully!";
-        })
-        .catch(() => {
-          throw new HttpException(400, "Email is already taken");
-        });
-    } else {
-      throw new HttpException(400, "User already exists");
-    }
-  });
+  return await checkIfEmailTaken(user.email)
+    .then(async (response) => {
+      if (!response) {
+        const password = await hashPassword(user.password);
+        const newUser = {
+          email: user.email,
+          password: password,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          registrationTime: Date.now(),
+          rating: 0,
+          countTrips: 0,
+          countDelivered: 0,
+          countSent: 0,
+          posts: [],
+          isAdmin: false,
+        };
+        return await Users.create(newUser)
+          .then(() => {
+            return "User created successfully!";
+          })
+          .catch((error) => {
+            throw new Error(error);
+          });
+      } else {
+        throw new HttpException(400, "Email is already taken");
+      }
+    })
+    .catch((error) => {
+      throw new HttpException(error.status, error.message);
+    });
 }
 
 async function checkIfEmailTaken(email: string) {

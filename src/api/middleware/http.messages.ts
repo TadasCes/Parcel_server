@@ -16,14 +16,6 @@ function returnError(error, res) {
     status,
     message,
   });
-  // if (message.includes("CastError")) {
-  //   res.status(status).json({
-  //     status: 404,
-  //     error: "No results found",
-  //   });
-  // } else {
-
-  // }
 }
 
 export { returnSuccess, returnError };

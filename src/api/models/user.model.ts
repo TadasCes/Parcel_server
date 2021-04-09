@@ -5,47 +5,44 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true
+    trim: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   firstName: {
     type: String,
-    required: true
+    required: true,
   },
   lastName: {
     type: String,
-    required: true
+    required: true,
   },
   registrationTime: {
     type: String,
-    required: true
+    required: true,
   },
   rating: {
     type: Number,
-    required: true
+    required: true,
   },
   countTrips: {
     type: Number,
-    required: true
+    required: true,
   },
   countDelivered: {
     type: Number,
-    required: true
+    required: true,
   },
   countSent: {
     type: Number,
-    required: true
+    required: true,
   },
   posts: {
     type: Array,
-    required: true
+    required: true,
   },
-  isAdmin: {
-    type: Boolean
-  }
 });
 
 export default mongoose.model("User", UserSchema);

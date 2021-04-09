@@ -20,22 +20,7 @@ const PostSchema = new Schema({
   },
   authorId: {
     type: String,
-    // firstName: {
-    //   type: String,
-    //   required: true
-    // },
-    // lastName: {
-    //   type: String,
-    //   required: true
-    // },
-    // rating: {
-    //   type: Number,
-    //   required: true
-    // },
-    // countDelivered: {
-    //   type: Number,
-    //   required: true
-    // }
+    required: true,
   },
 });
 

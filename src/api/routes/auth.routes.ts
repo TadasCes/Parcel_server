@@ -5,16 +5,16 @@ import User from "../models/user.model";
 import jwt from "jsonwebtoken";
 import config from "../../config";
 import bcrypt from "bcrypt";
+import { returnError, returnSuccess } from "../middleware/http.messages";
 var LocalStrategy = require("passport-local").Strategy;
 
 export const authRouter = express.Router();
 
-// Passport local strategy
 passport.use(
   new LocalStrategy(
     {
       usernameField: "email",
-      passwordField: "password"
+      passwordField: "password",
     },
     (email, password, done) => {
       User.findOne({ email }, (err, user, info) => {
@@ -22,15 +22,15 @@ passport.use(
           return done(err);
         }
         if (!user) {
-          console.log("No such user");
-          return done(null, false, { message: "No such user." });
+          return done(null, false, { status: 404, message: "No such user." });
         }
-        bcrypt.compare(password, user.password).then((result) => {
-          if (!result) {
-            console.log("Password incorrect");
-            return done(null, false, { message: "Incorrect password." });
+        bcrypt.compare(password, user.password, (error, response) => {
+          if (!response) {
+            return done(null, false, {
+              status: 400,
+              message: "Incorrect password.",
+            });
           } else {
-            console.log("Login successful!");
             return done(null, user);
           }
         });
@@ -38,6 +38,38 @@ passport.use(
     }
   )
 );
+
+// Auth routes
+// Login
+authRouter.post("/login", (req, res, next) => {
+  passport.authenticate(
+    "local",
+    { failureFlash: true },
+    (error, user, info) => {
+      if (error) {
+        return returnError(error, res);
+      }
+      if (user) {
+        const token = jwt.sign({ id: user.id }, config.secret, {
+          expiresIn: 86400,
+        });
+        return res.json({ auth: true, token, user });
+      }
+      return returnError(info, res);
+    }
+  )(req, res, next);
+});
+
+// Register
+authRouter.post("/register", async (req, res, next) => {
+  await createUser(req.body)
+    .then((response) => {
+      returnSuccess(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
 
 passport.serializeUser((user, cb) => {
   cb(null, user.id);
@@ -50,33 +82,4 @@ passport.deserializeUser((id, cb) => {
     }
     cb(null, user);
   });
-});
-
-// Auth routes
-authRouter.post("/login", (req, res, next) => {
-  passport.authenticate("local", { failureFlash: true }, (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (user) {
-      const token = jwt.sign({ id: user.id }, config.secret, { expiresIn: 86400 });
-      return res.json({ auth: true, token, user });
-    }
-    return res.status(401).json(info);
-  })(req, res, next);
-});
-
-authRouter.post("/register", async (req, res, next) => {
-  await createUser(req.body)
-    .then(() => {
-      res.json({
-        status: 200,
-        message: "User created successfully!"
-      });
-    })
-    .catch((error) => {
-      res.json({
-        error
-      });
-    });
 });

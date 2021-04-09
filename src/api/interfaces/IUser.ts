@@ -11,7 +11,6 @@ interface IUser extends Document {
   countDelivered: number;
   countSent: number;
   posts: [];
-  isAdmin: boolean;
 }
 
 export default IUser;
