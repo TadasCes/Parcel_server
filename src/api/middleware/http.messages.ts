@@ -8,6 +8,12 @@ function returnSuccess(result, res) {
   });
 }
 
+function returnResult(result, res) {
+  return res.json({
+    result
+  });
+}
+
 function returnError(error, res) {
   const status = error.status || 500;
   const message = error.message || "Something went wrong";
@@ -18,7 +24,7 @@ function returnError(error, res) {
   });
 }
 
-export { returnSuccess, returnError };
+export { returnSuccess, returnResult, returnError };
 
 // userRouter.post(
 //   '/',

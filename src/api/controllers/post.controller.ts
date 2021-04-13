@@ -11,18 +11,37 @@ async function getAllPosts() {
     .then((result) => {
       return result;
     })
-    .catch((error) => {
+    .catch(() => {
       throw new HttpException(404, "No results");
     });
 }
 
 async function getFilteredPosts(query: any) {
-  const result = await Post.aggregate([
+  return await Post.aggregate([
     {
       $match: { cityStart: query.cityStart },
     },
-  ]);
-  return result;
+  ])
+    .then((result) => {
+      return result;
+    })
+    .catch(() => {
+      throw new HttpException(404, "No results");
+    });
+}
+
+async function getAllUserPosts(query: any) {
+  return await Post.aggregate([
+    {
+      $match: { author: query.cityStart },
+    },
+  ])
+    .then((result) => {
+      return result;
+    })
+    .catch(() => {
+      throw new HttpException(404, "No results");
+    });
 }
 
 async function getOnePost(id: string) {
@@ -30,16 +49,16 @@ async function getOnePost(id: string) {
     .then((result) => {
       return result;
     })
-    .catch((error) => {
+    .catch(() => {
       throw new HttpException(404, "No such post");
     });
 }
 
 async function createPost(newPost: IPost) {
-  console.log(newPost.authorId);
+  console.log(newPost.author.id);
   await Post.create(newPost)
     .then(async (post) => {
-      await assignPostToUser(newPost.authorId, post.id)
+      await assignPostToUser(newPost.author.id, post.id)
         .then((response) => {
           console.log(response);
           return "Post created successfully!";
@@ -58,7 +77,7 @@ async function updatePost(id: string, post: IPost) {
     .then(() => {
       return "Post updated successfully!";
     })
-    .catch((error) => {
+    .catch(() => {
       throw new HttpException(404, "No such user");
     });
 }
@@ -68,7 +87,7 @@ async function deletePost(id: string) {
     .then(() => {
       return "Post deleted successfully!";
     })
-    .catch((error) => {
+    .catch(() => {
       throw new HttpException(404, "No such user");
     });
 }

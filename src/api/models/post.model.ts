@@ -18,10 +18,27 @@ const PostSchema = new Schema({
     type: Date,
     required: true,
   },
-  authorId: {
-    type: String,
-    required: true,
-  },
+  author: {
+    id: {
+      type: String
+    },
+    firstName: {
+      type: String,
+      required: true
+    },
+    lastName: {
+      type: String,
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true
+    },
+    countDelivered: {
+      type: Number,
+      required: true
+    }
+  }
 });
 
 export default mongoose.model("Post", PostSchema);
