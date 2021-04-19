@@ -39,6 +39,10 @@ const UserSchema = new Schema({
     type: Number,
     required: true,
   },
+  phone: {
+    type: String,
+    required: false,
+  },
   posts: {
     type: Array,
     required: true,

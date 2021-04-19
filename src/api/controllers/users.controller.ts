@@ -44,6 +44,7 @@ async function createUser(user: IRegistration) {
           firstName: user.firstName,
           lastName: user.lastName,
           registrationTime: Date.now(),
+          phone: "",
           rating: 0,
           countTrips: 0,
           countDelivered: 0,
@@ -111,32 +112,3 @@ export {
   assignPostToUser,
   deleteUser,
 };
-
-// static findUser(name: string): User | undefined {
-//   const result = UserList.list.find((u) => u.name === name)
-//   if (result === undefined) {
-//       return undefined
-//   } else {
-//       return result
-//   }
-// }
-
-// static addPassword(user: User, password: string): void {
-//   user.password = password
-// }
-
-// static addEmail(user: User, email: string): void {
-//   user.email = email
-// }
-
-// static addFriend(user: User, friend: string): void {
-//   user.friendList.push(friend);
-// }
-
-// static areFriends(user: User, friend: string): boolean {
-//   if (user.friendList.find(fr => fr === friend) === undefined) {
-//       return false
-//   } else {
-//       return true
-//   }
-// }

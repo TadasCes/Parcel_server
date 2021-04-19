@@ -26,10 +26,10 @@ postsRouter.get("/", async (req, res, next) => {
     startIndex = (parseInt(page) - 1) * parseInt(limit)
     endIndex = parseInt(page) * parseInt(limit)
   }
-
   await getAllPosts()
-    .then((response) => {
-      if (startIndex >= 0) {
+  .then((response) => {
+    console.log(response)
+      if (startIndex > 0) {
         const limitedResult = response.slice(startIndex, endIndex)
         returnResult(limitedResult, res)
       } else {
@@ -65,7 +65,7 @@ postsRouter.post("/filter", async (req, res, next) => {
     })
 })
 
-// Create
+// Create 
 postsRouter.post("/", async (req, res, next) => {
   await createPost(req.body)
     .then((result) => {

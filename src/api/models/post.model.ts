@@ -12,11 +12,15 @@ const PostSchema = new Schema({
   },
   timeStart: {
     type: Date,
-    required: true,
+    required: false,
   },
   timeEnd: {
     type: Date,
-    required: true,
+    required: false,
+  },
+  size: {
+    type: Number,
+    required: false,
   },
   author: {
     id: {
@@ -29,6 +33,10 @@ const PostSchema = new Schema({
     lastName: {
       type: String,
       required: true
+    },
+    phone: {
+      type: String,
+      required: false
     },
     rating: {
       type: Number,

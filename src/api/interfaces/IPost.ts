@@ -1,18 +1,20 @@
 import { Document } from "mongoose"
 import IUser from "./IUser"
 
-interface IPost extends Document {
+interface IPostTravel extends Document {
   cityStart: string
   cityFinish: string
-  timeStart: Date
+  timeStart?: Date
   timeEnd: Date
+  size?: number
   author: {
     id: string
     firstName: string
     lastName: string
+    phone: string
     rating: number
     countDelivered: number
   }
 }
 
-export default IPost
+export default IPostTravel

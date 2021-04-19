@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import IPost from "../interfaces/IPost";
 import Post from "../models/post.model";
 import { usersRouter } from "../routes/users.routes";
-import { getOneUser, assignPostToUser } from "../controllers/users.controller";
+import { getOneUser, assignPostToUser } from "./users.controller";
 import HttpException from "../middleware/http.exception";
 
 async function getAllPosts() {
@@ -30,20 +30,6 @@ async function getFilteredPosts(query: any) {
     });
 }
 
-async function getAllUserPosts(query: any) {
-  return await Post.aggregate([
-    {
-      $match: { author: query.cityStart },
-    },
-  ])
-    .then((result) => {
-      return result;
-    })
-    .catch(() => {
-      throw new HttpException(404, "No results");
-    });
-}
-
 async function getOnePost(id: string) {
   return await Post.findById(id)
     .then((result) => {
@@ -55,7 +41,7 @@ async function getOnePost(id: string) {
 }
 
 async function createPost(newPost: IPost) {
-  console.log(newPost.author.id);
+  console.log(newPost);
   await Post.create(newPost)
     .then(async (post) => {
       await assignPostToUser(newPost.author.id, post.id)
