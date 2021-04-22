@@ -2,6 +2,10 @@ import mongoose, { model, Schema } from "mongoose";
 import User from "./user.model";
 
 const PostSchema = new Schema({
+  type: {
+    type: Number,
+    required: true,
+  },
   cityStart: {
     type: String,
     required: true,

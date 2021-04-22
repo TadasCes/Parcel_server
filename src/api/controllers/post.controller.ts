@@ -42,20 +42,24 @@ async function getOnePost(id: string) {
 
 async function createPost(newPost: IPost) {
   console.log(newPost);
-  await Post.create(newPost)
-    .then(async (post) => {
-      await assignPostToUser(newPost.author.id, post.id)
-        .then((response) => {
-          console.log(response);
-          return "Post created successfully!";
-        })
-        .catch((error) => {
-          throw error;
-        });
-    })
-    .catch((error) => {
-      throw error;
-    });
+  if (newPost.type >= 1 || newPost.type <= 2) {
+    await Post.create(newPost)
+      .then(async (post) => {
+        await assignPostToUser(newPost.author.id, post.id)
+          .then((response) => {
+            console.log(response);
+            return "Post created successfully!";
+          })
+          .catch((error) => {
+            throw error;
+          });
+      })
+      .catch((error) => {
+        throw error;
+      });
+  } else {
+    throw new HttpException(401, "Wrong type");
+  }
 }
 
 async function updatePost(id: string, post: IPost) {
