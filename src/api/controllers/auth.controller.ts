@@ -7,7 +7,7 @@ import config from "../../config";
 import bcrypt from "bcrypt";
 import { returnError, returnSuccess } from "../middleware/http.messages";
 var LocalStrategy = require("passport-local").Strategy;
-
+var GoogleStrategy = require("passport-google-oauth").OAuthStrategy;
 // Passport local strategy
 // login
 
@@ -39,3 +39,18 @@ passport.use(
     }
   )
 );
+
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       consumerKey: GOOGLE_CONSUMER_KEY,
+//       consumerSecret: GOOGLE_CONSUMER_SECRET,
+//       callbackURL: "http://www.example.com/auth/google/callback",
+//     },
+//     (token, tokenSecret, profile, done) => {
+//       User.findOne({ googleId: profile.id }, function (err, user) {
+//         return done(err, user);
+//       });
+//     }
+//   )
+// );

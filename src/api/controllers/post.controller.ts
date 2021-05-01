@@ -19,10 +19,21 @@ async function getAllPosts() {
 async function getFilteredPosts(query: any) {
   return await Post.aggregate([
     {
-      $match: { cityStart: query.cityStart },
+      $match: {
+        $and: [{ cityStart: query.cityStart }, { cityEnd: query.cityEnd }],
+        // { $match: { date: query.date } },
+        // { $match: { type: query.type } },
+        // {
+        //   $cond: {
+        //     if: { $gte: [query.size, "$size"] },
+        //     then: { $match: { size: query.size } },
+        //   },
+        // },
+      },
     },
   ])
     .then((result) => {
+      console.log(result);
       return result;
     })
     .catch(() => {

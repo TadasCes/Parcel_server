@@ -8,10 +8,10 @@ interface IUser extends Document {
   registeredDate: string;
   phone: string;
   rating: number;
-  countTrips: number;
-  countDelivered: number;
-  countSent: number;
+  review: [];
+  reviewCount: 0;
   posts: [];
+  googleId?: string;
 }
 
 export default IUser;

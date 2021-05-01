@@ -6,9 +6,44 @@ import jwt from "jsonwebtoken";
 import config from "../../config";
 import bcrypt from "bcrypt";
 import { returnError, returnSuccess } from "../middleware/http.messages";
-var LocalStrategy = require("passport-local").Strategy;
+import IRegistration from "../interfaces/IRegistration";
 
 export const authRouter = express.Router();
+var LocalStrategy = require("passport-local").Strategy;
+const passport = require("passport");
+var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID:
+        "178775464945-f6ok0o75ku4estdbkassoubgk8jpc01p.apps.googleusercontent.com",
+      clientSecret: "a87vF1aI3chAqVzc63mfzkds",
+      callbackURL: "http://127.0.0.1:5000/auth/google/callback",
+    },
+    async function (token, tokenSecret, profile, done) {
+      await User.findOne({ googleId: profile.id }, async function (err, user) {
+        if (user == null) {
+          const newUser = {
+            email: profile.emails[0].value,
+            password: "",
+            firstName: profile.name.familyName,
+            lastName: profile.name.givenName,
+            phone: "",
+            googleId: profile.id
+          } 
+          await createUser(newUser).then((user) => {
+            console.log("sukurtas")
+            return done(null, user);
+          });
+        } else {
+          console.log(user)
+          return done(null, user);
+        }
+      });
+    }
+  )
+);
 
 passport.use(
   new LocalStrategy(
@@ -71,8 +106,30 @@ authRouter.post("/register", async (req, res, next) => {
     });
 });
 
+authRouter.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+    ],
+    // scope: ["https://www.googleapis.com/auth/plus.login"],
+  }),
+  function (req, res) {
+    console.log("ja");
+  }
+);
+
+authRouter.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function (req, res: any) {
+    res.redirect("/");
+  }
+);
+
 passport.serializeUser((user, cb) => {
-  cb(null, user.id);
+  cb(null, user._id);
 });
 
 passport.deserializeUser((id, cb) => {

@@ -45,10 +45,6 @@ const PostSchema = new Schema({
     rating: {
       type: Number,
       required: true
-    },
-    countDelivered: {
-      type: Number,
-      required: true
     }
   }
 });

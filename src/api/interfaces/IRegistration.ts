@@ -1,10 +1,13 @@
 import { Document } from 'mongoose';
+import { AnyARecord } from 'node:dns';
 
 interface IRegistration extends Document {
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string
+  email?: any,
+  password?: any,
+  firstName?: any,
+  lastName?: any,
+  phone?: any,
+  googleId?: any
 };
 
 export default IRegistration

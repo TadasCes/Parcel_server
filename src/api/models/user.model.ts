@@ -27,18 +27,6 @@ const UserSchema = new Schema({
     type: Number,
     required: true,
   },
-  countTrips: {
-    type: Number,
-    required: true,
-  },
-  countDelivered: {
-    type: Number,
-    required: true,
-  },
-  countSent: {
-    type: Number,
-    required: true,
-  },
   phone: {
     type: String,
     required: false,
@@ -47,6 +35,18 @@ const UserSchema = new Schema({
     type: Array,
     required: true,
   },
+  reviews: {
+    type: Array,
+    required: false,
+  },
+  reviewCount: {
+    type: Number,
+    required: false,
+  },
+  googleId: {
+    type: String,
+    required: false,
+  }
 });
 
 export default mongoose.model("User", UserSchema);

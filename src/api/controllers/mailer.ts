@@ -14,24 +14,28 @@ const options = {
   },
 };
 
-export async function mailer() {
-
+export async function mailer(
+  authorContacts: { email: string; phone: number },
+  userEmail: string
+) {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
-      user: "vilkelis300@gmail.com",
-      pass: "puodelis2",
+      user: "info.siuntio@gmail.com",
+      pass: "siuntio12345",
     },
   });
 
   let info = await transporter.sendMail({
-    from: "bakalauras@sedi.com",
-    to: "mantas.seras@gmail.com",
+    from: "info.siuntio@gmail.com",
+    to: "info.siuntio@gmail.com",
     subject: "Cyrikas, sedi",
-    text: "Zjbs, padariau, kad galima butu siust per el pasta laiskus, bet dabar dar su savo pastu, reikia tik sukurt nauja el pasta laiskam siust",
+    html: `<h2>Vartotojo kontaktiniai duomenys: </h2>
+    <h5>el. paštas: ${authorContacts.email}</h5>
+    <h5>telefono numeris: ${authorContacts.phone}</h5>`,
   });
 
   console.log("Message sent: %s", info.messageId);
@@ -43,6 +47,14 @@ export async function mailer() {
 }
 
 export async function sendEmail({ from, to, subject, html }) {
-  const transporter = nodemailer.createTransport(options);
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "info.siuntio@gmail.com",
+      pass: "siuntio12345",
+    },
+  });
   await transporter.sendMail({ from, to, subject, html });
 }

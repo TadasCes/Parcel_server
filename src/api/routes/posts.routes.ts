@@ -13,6 +13,7 @@ import {
   deletePost,
   getFilteredPosts,
 } from "../controllers/post.controller";
+import {sendContactInfo} from "../controllers/users.controller"
 import { mailer } from "../controllers/mailer";
 
 export const postsRouter = express.Router();
@@ -99,9 +100,12 @@ postsRouter.delete("/:id", async (req, res, next) => {
     });
 });
 
-postsRouter.post("/email", async (req, res, next) => {
-  await mailer().then(() => {
-    console.log("alio");
-    returnSuccess("Nice", res);
-  });
+postsRouter.post("/send-contact", async (req, res, next) => {
+  await sendContactInfo(req.body.post, req.body.email)
+    .then(() => {
+      returnSuccess("Issiusta", res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
 });
