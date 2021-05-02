@@ -51,10 +51,12 @@ async function createUser(user: any) {
           registrationTime: Date.now(),
           phone: user.phone,
           rating: 0,
+          tripCount: 0,
+          sentCount: 0,
           posts: [],
           review: [],
           isAdmin: false,
-          googleId: user.googleId
+          googleId: user.googleId,
         };
         return await Users.create(newUser)
           .then(() => {
@@ -131,6 +133,26 @@ async function updateUser(id: string, user: IUser) {
     });
 }
 
+async function increaseTripCount(id: string) {
+  return await Users.findOneAndUpdate(
+    { _id: id },
+    { $inc: { tripCount: 1 } },
+    { new: true }
+  ).then((response) => {
+    return response;
+  });
+}
+
+async function increaseSentCount(id: string) {
+  return await Users.findOneAndUpdate(
+    { _id: id },
+    { $inc: { sentCount: 1 } },
+    { new: true }
+  ).then((response) => {
+    return response;
+  });
+}
+
 async function assignReviewToUser(reviewId: string, targetId: string) {
   await Users.findOneAndUpdate(
     { _id: targetId },
@@ -181,7 +203,7 @@ async function sendContactInfo(post: any, email: any) {
   await getOneUser(post.author.id).then((user: any) => {
     sendEmail({
       from: "noreply@siunt.io",
-      to: "v.vilkelis97@gmail.com",
+      to: "mantasereicikas@gmail.com",
       subject: `Kelionės ${post.cityStart} - ${post.cityEnd} informacija`,
       html: `
       <p>Sveiki, \n siunčiame įrašo autoriaus kontaktinius duomenis</p>
@@ -208,6 +230,8 @@ export {
   getAllUserReviews,
   assignPostToUser,
   deleteUser,
+  increaseTripCount,
   addReview,
+  increaseSentCount,
   sendContactInfo,
 };

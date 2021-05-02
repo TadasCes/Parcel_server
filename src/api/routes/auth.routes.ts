@@ -30,14 +30,14 @@ passport.use(
             firstName: profile.name.familyName,
             lastName: profile.name.givenName,
             phone: "",
-            googleId: profile.id
-          } 
+            googleId: profile.id,
+          };
           await createUser(newUser).then((user) => {
-            console.log("sukurtas")
+            console.log("sukurtas");
             return done(null, user);
           });
         } else {
-          console.log(user)
+          console.log(user);
           return done(null, user);
         }
       });

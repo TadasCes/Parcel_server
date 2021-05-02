@@ -14,7 +14,8 @@ interface IPostTravel extends Document {
     lastName: string
     phone: string
     rating: number
-    countDelivered: number
+    tripCount: number
+    sentCount: number
   }
 }
 

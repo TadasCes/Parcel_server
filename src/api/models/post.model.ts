@@ -45,6 +45,14 @@ const PostSchema = new Schema({
     rating: {
       type: Number,
       required: true
+    },
+    tripCount: {
+      type: Number,
+      required: true
+    },
+    sentCount: {
+      type: Number,
+      required: true
     }
   }
 });

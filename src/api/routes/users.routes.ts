@@ -12,7 +12,9 @@ import {
   updateUser,
   deleteUser,
   addReview,
+  increaseSentCount,
   getAllUserReviews,
+  increaseTripCount,
 } from "../controllers/users.controller";
 
 export const usersRouter = express.Router();
@@ -68,6 +70,29 @@ usersRouter.put("/:id/review", async (req, res, next) => {
     });
 });
 
+usersRouter.put("/:id/trip", async (req, res, next) => {
+  await increaseTripCount(req.params.id)
+    .then((response) => {
+      console.log(response);
+      res.json({ user: response });
+      // returnResult(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+usersRouter.put("/:id/sent", async (req, res, next) => {
+  await increaseSentCount(req.params.id)
+    .then((response) => {
+      res.json({ user: response });
+      // returnResult(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
 usersRouter.delete("/:id", async (req, res, next) => {
   await deleteUser(req.params.id)
     .then((response) => {
@@ -81,7 +106,7 @@ usersRouter.delete("/:id", async (req, res, next) => {
 reviewRouter.get("/:id", async (req, res, next) => {
   await getAllUserReviews(req.params.id)
     .then((response) => {
-      console.log(response)
+      console.log(response);
       returnResult(response, res);
     })
     .catch((error) => {

@@ -31,7 +31,7 @@ export async function mailer(
 
   let info = await transporter.sendMail({
     from: "info.siuntio@gmail.com",
-    to: "info.siuntio@gmail.com",
+    to: "mantasereicikas@gmail.com",
     subject: "Cyrikas, sedi",
     html: `<h2>Vartotojo kontaktiniai duomenys: </h2>
     <h5>el. paštas: ${authorContacts.email}</h5>

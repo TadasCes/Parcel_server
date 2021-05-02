@@ -43,6 +43,14 @@ const UserSchema = new Schema({
     type: Number,
     required: false,
   },
+  tripCount: {
+    type: Number,
+    required: false
+  },
+  sentCount: {
+    type: Number,
+    required: false
+  },
   googleId: {
     type: String,
     required: false,

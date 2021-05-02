@@ -10,6 +10,8 @@ interface IUser extends Document {
   rating: number;
   review: [];
   reviewCount: 0;
+  tripCount: 0;
+  sentCount: 0;
   posts: [];
   googleId?: string;
 }
