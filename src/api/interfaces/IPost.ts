@@ -8,15 +8,7 @@ interface IPostTravel extends Document {
   timeStart?: Date
   timeEnd: Date
   size?: number
-  author: {
-    id: string
-    firstName: string
-    lastName: string
-    phone: string
-    rating: number
-    tripCount: number
-    sentCount: number
-  }
+  authorId: string
 }
 
 export default IPostTravel

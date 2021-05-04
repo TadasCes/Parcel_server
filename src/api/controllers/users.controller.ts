@@ -76,6 +76,7 @@ async function createUser(user: any) {
 }
 
 async function getAllUserReviews(userId: string) {
+  console.log(userId)
   return await Reviews.find({ targetId: userId }).then((result) => {
     return result;
   });
@@ -107,7 +108,7 @@ async function addReview(review: IReview) {
     })
     .catch((error) => {
       console.log(error);
-      throw new HttpException(404, "No such user");
+      throw new Error(error);
     });
 }
 
@@ -154,21 +155,31 @@ async function increaseSentCount(id: string) {
 }
 
 async function assignReviewToUser(reviewId: string, targetId: string) {
-  await Users.findOneAndUpdate(
+  return await Users.findOneAndUpdate(
     { _id: targetId },
-    { $push: { reviews: reviewId } }
-  )
-    .then(async () => {
-      await Users.findOneAndUpdate(
-        { _id: targetId },
-        { $inc: { reviewCount: 1 } }
-      ).then(() => {
-        return "Review assigned to the user";
+    { $push: { reviews: reviewId } },
+    { new: true }
+  ).then(async (user: any) => {
+    let averageRating = 0;
+    let i = 0;
+    user.reviews.forEach(async (review) => {
+      getOneReview(review).then(async (result: any) => {
+        i++;
+        averageRating += result.rating;
+        if (i == user.reviews.length) {
+          const newRating =
+            Math.round((averageRating / user.reviews.length) * 100) / 100;
+          await Users.findOneAndUpdate(
+            { _id: targetId },
+            { rating: newRating },
+            { new: true }
+          ).then(() => {
+            return "Review added, rating updated";
+          });
+        }
       });
-    })
-    .catch(() => {
-      throw new HttpException(404, "No such user");
     });
+  });
 }
 
 async function assignPostToUser(authorId: string, postId: string) {

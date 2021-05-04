@@ -26,34 +26,9 @@ const PostSchema = new Schema({
     type: Number,
     required: false,
   },
-  author: {
-    id: {
-      type: String
-    },
-    firstName: {
-      type: String,
-      required: true
-    },
-    lastName: {
-      type: String,
-      required: true
-    },
-    phone: {
-      type: String,
-      required: false
-    },
-    rating: {
-      type: Number,
-      required: true
-    },
-    tripCount: {
-      type: Number,
-      required: true
-    },
-    sentCount: {
-      type: Number,
-      required: true
-    }
+  authorId: {
+    type: String,
+    required: true,
   }
 });
 

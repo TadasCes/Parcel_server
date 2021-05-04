@@ -56,7 +56,7 @@ async function createPost(newPost: IPost) {
   if (newPost.type >= 1 || newPost.type <= 2) {
     await Post.create(newPost)
       .then(async (post) => {
-        await assignPostToUser(newPost.author.id, post.id)
+        await assignPostToUser(newPost.authorId, post.id)
           .then((response) => {
             console.log(response);
             return "Post created successfully!";

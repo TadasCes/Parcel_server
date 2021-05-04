@@ -31,7 +31,7 @@ app.use(passport.session());
 
 app.use("/api/", authRouter);
 app.use("/api/users/", usersRouter);
-app.use("/api/review/", reviewRouter);
+app.use("/api/reviews/", reviewRouter);
 app.use("/api/posts/", postsRouter);
 
 app.all("/*", function (req, res, next) {
