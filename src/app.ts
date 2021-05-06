@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/", authRouter);
+app.use("/", authRouter);
 app.use("/api/users/", usersRouter);
 app.use("/api/reviews/", reviewRouter);
 app.use("/api/posts/", postsRouter);

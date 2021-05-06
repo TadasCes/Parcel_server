@@ -11,7 +11,9 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  changePassword,
   addReview,
+  forgotPassword,
   increaseSentCount,
   getAllUserReviews,
   increaseTripCount,
@@ -106,7 +108,6 @@ usersRouter.delete("/:id", async (req, res, next) => {
 reviewRouter.get("/:id/all-reviews", async (req, res, next) => {
   await getAllUserReviews(req.params.id)
     .then((response) => {
-      console.log(response);
       returnResult(response, res);
     })
     .catch((error) => {
@@ -118,6 +119,27 @@ reviewRouter.post("/add-review", async (req, res, next) => {
   await addReview(req.body)
     .then((response) => {
       returnSuccess(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+usersRouter.post("/forgot-password", async (req, res, next) => {
+  await forgotPassword(req.body.email)
+    .then(() => {
+      returnSuccess("Issiusta", res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+usersRouter.put("/change-password/:id", async (req, res, next) => {
+  await changePassword(req.params.id, req.body.password)
+    .then((response) => {
+      res.json({ user: response });
+      // returnResult(response, res);
     })
     .catch((error) => {
       returnError(error, res);

@@ -29,7 +29,15 @@ const PostSchema = new Schema({
   authorId: {
     type: String,
     required: true,
-  }
+  },
+  comment: {
+    type: String,
+    required: false,
+  },
+  canChange: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 export default mongoose.model("Post", PostSchema);

@@ -38,6 +38,19 @@ async function getOneUser(id: string) {
     });
 }
 
+async function getOneUserByEmail(email: string) {
+  return await Users.findOne({ email: email })
+    .then((result) => {
+      if (!result) {
+        throw new HttpException(404, "No result");
+      }
+      return result;
+    })
+    .catch(() => {
+      throw new HttpException(404, "No such user");
+    });
+}
+
 async function createUser(user: any) {
   return await checkIfEmailTaken(user.email)
     .then(async (response) => {
@@ -76,7 +89,6 @@ async function createUser(user: any) {
 }
 
 async function getAllUserReviews(userId: string) {
-  console.log(userId)
   return await Reviews.find({ targetId: userId }).then((result) => {
     return result;
   });
@@ -128,6 +140,21 @@ async function updateUser(id: string, user: IUser) {
     .then((newUser) => {
       console.log(newUser);
       return "User updated successfully!";
+    })
+    .catch(() => {
+      throw new HttpException(404, "No such user");
+    });
+}
+
+async function changePassword(id: string, password: IUser) {
+  return await Users.findOneAndUpdate(
+    { _id: id },
+    { password: password },
+    { new: true }
+  )
+    .then((newUser) => {
+      console.log(newUser);
+      return "Password updated successfully!";
     })
     .catch(() => {
       throw new HttpException(404, "No such user");
@@ -233,6 +260,27 @@ async function sendContactInfo(post: any, email: any) {
   });
 }
 
+async function forgotPassword(email: any) {
+  return getOneUserByEmail(email).then((user: any) => {
+    sendEmail({
+      from: "noreply@siunt.io",
+      to: `${email}`,
+      subject: `Slaptažodžio pakeitimas`,
+      html: `
+        <p>Sveiki, \n norėdami pakeisti slaptažodį, paspauskite žemiau esančią nuorodą. \n \n </p>
+        <p>http://localhost:8080/change-password/${user._id}</p>
+        `,
+    })
+      .then(() => {
+        console.log("Sekmingai issiusta");
+        return true;
+      })
+      .catch((error) => {
+        return error;
+      });
+  });
+}
+
 export {
   getAllUsers,
   getOneUser,
@@ -245,4 +293,6 @@ export {
   addReview,
   increaseSentCount,
   sendContactInfo,
+  changePassword,
+  forgotPassword,
 };
