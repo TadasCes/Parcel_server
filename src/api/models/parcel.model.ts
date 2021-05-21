@@ -1,19 +1,12 @@
 import mongoose, { model, Schema } from "mongoose";
 import User from "./user.model";
-const PostSchema = new Schema({
-  type: {
-    type: Number,
-    required: true,
-  },
+
+const ParcelSchema = new Schema({
   cityStart: {
     type: String,
     required: true,
   },
   cityEnd: {
-    type: String,
-    required: true,
-  },
-  day: {
     type: String,
     required: true,
   },
@@ -37,11 +30,7 @@ const PostSchema = new Schema({
     type: String,
     required: false,
   },
-  canChange: {
-    type: Boolean,
-    required: true,
-  },
-  urgent: {
+  urget: {
     type: Boolean,
     required: false,
   },
@@ -53,10 +42,6 @@ const PostSchema = new Schema({
     type: Boolean,
     required: false,
   },
-  seenCount: {
-    type: Number,
-    required: false
-  }
 });
 
-export default mongoose.model("Post", PostSchema);
+export default mongoose.model("Parcel", ParcelSchema);

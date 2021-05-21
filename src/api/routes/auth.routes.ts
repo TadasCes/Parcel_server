@@ -27,7 +27,10 @@ passport.use(
           return done(null, false, { status: 404, message: "No such user." });
         }
         bcrypt.compare(password, user.password, (error, response) => {
+          console.log(error)
+          console.log(response)
           if (!response) {
+
             return done(null, false, {
               status: 400,
               message: "Incorrect password.",
@@ -57,6 +60,7 @@ authRouter.post("/login", (req, res, next) => {
         });
         return res.json({ auth: true, token, user });
       }
+      console.log(error)
       return returnError(info, res);
     }
   )(req, res, next);

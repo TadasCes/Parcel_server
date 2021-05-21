@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import { usersRouter, reviewRouter } from "./api/routes/users.routes";
 import { postsRouter } from "./api/routes/posts.routes";
+import { parcelsRouter } from "./api/routes/parcels.routes";
 import { authRouter } from "./api/routes/auth.routes";
 import passport from "passport";
 
@@ -33,6 +34,7 @@ app.use("/", authRouter);
 app.use("/api/users/", usersRouter);
 app.use("/api/reviews/", reviewRouter);
 app.use("/api/posts/", postsRouter);
+app.use("/api/parcels/", parcelsRouter);
 
 app.all("/*", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

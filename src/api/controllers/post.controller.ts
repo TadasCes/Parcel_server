@@ -8,6 +8,7 @@ import HttpException from "../middleware/http.exception";
 
 async function getAllPosts() {
   return await Post.find({})
+    .sort({ timeStart: "asc" })
     .then((result) => {
       return result;
     })
@@ -17,18 +18,16 @@ async function getAllPosts() {
 }
 
 async function getFilteredPosts(query: any) {
+  console.log(query);
   return await Post.aggregate([
     {
       $match: {
-        $and: [{ cityStart: query.cityStart }, { cityEnd: query.cityEnd }],
-        // { $match: { date: query.date } },
-        // { $match: { type: query.type } },
-        // {
-        //   $cond: {
-        //     if: { $gte: [query.size, "$size"] },
-        //     then: { $match: { size: query.size } },
-        //   },
-        // },
+        $and: [
+          { cityStart: query.cityStart },
+          { cityEnd: query.cityEnd },
+          { day: query.date },
+          { type: query.type },
+        ],
       },
     },
   ])
@@ -93,6 +92,16 @@ async function deletePost(id: string) {
     });
 }
 
+async function seenCount(id: string) {
+  return await Post.findOneAndUpdate(
+    { _id: id },
+    { $inc: { seenCount: 1 } },
+    { new: true }
+  ).then(() => {
+    return "Seen added";
+  });
+}
+
 export {
   getAllPosts,
   getOnePost,
@@ -100,4 +109,5 @@ export {
   updatePost,
   deletePost,
   getFilteredPosts,
+  seenCount,
 };

@@ -147,9 +147,10 @@ async function updateUser(id: string, user: IUser) {
 }
 
 async function changePassword(id: string, password: IUser) {
+  const newPassword = await hashPassword(password);
   return await Users.findOneAndUpdate(
     { _id: id },
-    { password: password },
+    { password: newPassword },
     { new: true }
   )
     .then((newUser) => {
@@ -219,13 +220,23 @@ async function assignPostToUser(authorId: string, postId: string) {
     });
 }
 
+async function assignParcelToUser(authorId: string, parcelId: string) {
+  await Users.findOneAndUpdate({ _id: authorId }, { $push: { parcels: parcelId } })
+    .then(() => {
+      return "Parcel assigned to the user";
+    })
+    .catch(() => {
+      throw new HttpException(404, "No such user");
+    });
+}
+
 async function deleteUser(id: string) {
   return await Users.findOneAndRemove({ _id: id })
     .then(async () => {
       console.log("user deleted");
       await getAllPosts().then(async (result: any) => {
         result.forEach(async (post) => {
-          if (post.author.id == id) {
+          if (post.authorId == id) {
             await deletePost(post._id);
           }
         });
@@ -241,7 +252,7 @@ async function sendContactInfo(post: any, email: any) {
   await getOneUser(post.author.id).then((user: any) => {
     sendEmail({
       from: "noreply@siunt.io",
-      to: "mantasereicikas@gmail.com",
+      to: "vainius.vilkelis@stud.vgtu.lt",
       subject: `Kelionės ${post.cityStart} - ${post.cityEnd} informacija`,
       html: `
       <p>Sveiki, \n siunčiame įrašo autoriaus kontaktinius duomenis</p>
@@ -294,5 +305,6 @@ export {
   increaseSentCount,
   sendContactInfo,
   changePassword,
+  assignParcelToUser,
   forgotPassword,
 };

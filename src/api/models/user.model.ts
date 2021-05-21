@@ -35,6 +35,10 @@ const UserSchema = new Schema({
     type: Array,
     required: true,
   },
+  parcels: {
+    type: Array,
+    required: true,
+  },
   reviews: {
     type: Array,
     required: false,

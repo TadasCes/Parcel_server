@@ -13,6 +13,7 @@ interface IUser extends Document {
   tripCount: 0;
   sentCount: 0;
   posts: [];
+  parcels: [];
   googleId?: string;
 }
 
