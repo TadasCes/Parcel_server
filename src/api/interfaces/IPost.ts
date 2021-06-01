@@ -15,6 +15,7 @@ interface IPostTravel extends Document {
   urgent?: boolean
   fragile?: boolean
   animal?: boolean
-  sennCount?: number
+  seenCount?: number
+  isActive: boolean
 }
 export default IPostTravel

@@ -13,8 +13,11 @@ import {
   deletePost,
   getFilteredPosts,
   seenCount,
+  getAllUserPosts,
+  deactivatePost,
+  activatePost,
 } from "../controllers/post.controller";
-import { sendContactInfo } from "../controllers/users.controller";
+import { sendContactInfo, sendContactInfo2 } from "../controllers/users.controller";
 import { mailer } from "../controllers/mailer";
 import moment from "moment";
 
@@ -32,16 +35,8 @@ postsRouter.get("/", async (req, res, next) => {
   }
   await getAllPosts()
     .then((response) => {
-      const validPosts: Array<any> = [];
-      response.forEach((post: any) => {
-        const postDate = moment(post.timeStart).format("YYYY-MM-DD");
-        const nowDate = moment().format("YYYY-MM-DD");
-        if (postDate > nowDate) {
-          validPosts.push(post);
-        }
-      });
       if (startIndex >= 0) {
-        const limitedResult = validPosts.slice(startIndex, endIndex);
+        const limitedResult = response.slice(startIndex, endIndex);
         returnResult(limitedResult, res);
       } else {
         returnResult(response, res);
@@ -59,7 +54,7 @@ postsRouter.get("/all-valid-posts", async (req, res, next) => {
       response.forEach((post: any) => {
         const postDate = moment(post.timeStart).format("YYYY-MM-DD");
         const nowDate = moment().format("YYYY-MM-DD");
-        if (postDate > nowDate) {
+        if (postDate >= nowDate) {
           validPosts.push(post);
         }
       });
@@ -72,6 +67,16 @@ postsRouter.get("/all-valid-posts", async (req, res, next) => {
 
 postsRouter.get("/all-posts", async (req, res, next) => {
   await getAllPosts()
+    .then((response) => {
+      returnResult(response, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+postsRouter.get("/all-user-posts/:id", async (req, res, next) => {
+  await getAllUserPosts(req.params.id)
     .then((response) => {
       returnResult(response, res);
     })
@@ -128,7 +133,7 @@ postsRouter.put("/:id", async (req, res, next) => {
 });
 
 // Update
-postsRouter.put("/:id", async (req, res, next) => {
+postsRouter.put("/update/:id", async (req, res, next) => {
   await updatePost(req.params.id, req.body)
     .then((result) => {
       returnSuccess(result, res);
@@ -149,8 +154,39 @@ postsRouter.delete("/:id", async (req, res, next) => {
     });
 });
 
+postsRouter.put("/:id/deactivate", async (req, res, next) => {
+  await deactivatePost(req.params.id)
+    .then((result) => {
+      returnSuccess(result, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+postsRouter.put("/:id/activate", async (req, res, next) => {
+  await activatePost(req.params.id)
+    .then((result) => {
+      returnSuccess(result, res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
 postsRouter.post("/send-contact", async (req, res, next) => {
+  console.log(req.body.post);
   await sendContactInfo(req.body.post, req.body.email)
+    .then(() => {
+      returnSuccess("Issiusta", res);
+    })
+    .catch((error) => {
+      returnError(error, res);
+    });
+});
+
+postsRouter.post("/send-contact2", async (req, res, next) => {
+  await sendContactInfo2()
     .then(() => {
       returnSuccess("Issiusta", res);
     })

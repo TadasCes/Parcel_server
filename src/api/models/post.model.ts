@@ -56,6 +56,10 @@ const PostSchema = new Schema({
   seenCount: {
     type: Number,
     required: false
+  },
+  isActive: {
+    type: Boolean,
+    required: true
   }
 });
 

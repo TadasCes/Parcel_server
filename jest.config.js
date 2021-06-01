@@ -9,4 +9,8 @@ module.exports = {
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
+    collectCoverageFrom: [
+      'src/api/controllers/post.controller.ts',
+      'src/api/controllers/users.controller.ts',
+  ],
   }

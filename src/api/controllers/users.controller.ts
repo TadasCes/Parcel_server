@@ -83,7 +83,6 @@ async function createUser(user: any) {
       }
     })
     .catch((error) => {
-      console.log(error);
       throw new HttpException(error.status, error.message);
     });
 }
@@ -119,7 +118,6 @@ async function addReview(review: IReview) {
         });
     })
     .catch((error) => {
-      console.log(error);
       throw new Error(error);
     });
 }
@@ -131,14 +129,12 @@ async function checkIfEmailTaken(email: string) {
 }
 
 async function updateUser(id: string, user: IUser) {
-  console.log(user);
   return await Users.findOneAndUpdate(
     { _id: id },
     { firstName: user.firstName },
     { new: true }
   )
     .then((newUser) => {
-      console.log(newUser);
       return "User updated successfully!";
     })
     .catch(() => {
@@ -154,7 +150,6 @@ async function changePassword(id: string, password: IUser) {
     { new: true }
   )
     .then((newUser) => {
-      console.log(newUser);
       return "Password updated successfully!";
     })
     .catch(() => {
@@ -221,7 +216,10 @@ async function assignPostToUser(authorId: string, postId: string) {
 }
 
 async function assignParcelToUser(authorId: string, parcelId: string) {
-  await Users.findOneAndUpdate({ _id: authorId }, { $push: { parcels: parcelId } })
+  await Users.findOneAndUpdate(
+    { _id: authorId },
+    { $push: { parcels: parcelId } }
+  )
     .then(() => {
       return "Parcel assigned to the user";
     })
@@ -270,12 +268,33 @@ async function sendContactInfo(post: any, email: any) {
       });
   });
 }
+async function sendContactInfo2() {
+  sendEmail({
+    from: "noreply@siunt.io",
+    to: "v.vilkelis97@gmail.com",
+    subject: `Kelionės Alytus - Palanga informacija`,
+    html: `
+      <p>Sveiki, \n siunčiame įrašo autoriaus kontaktinius duomenis</p>
+      <h4>Vartotojo kontaktiniai duomenys: </h4>
+      <p><b>Vardas: </b>: Petras</p>
+      <p><b>el. paštas</b>: petraitis@gmail.com</p>
+      <p><b>telefono numeris:</b> +37062352622</p>`,
+  })
+    .then(() => {
+      console.log("Sekmingai issiusta");
+      return true;
+    })
+    .catch((error) => {
+      return error;
+    });
+}
 
 async function forgotPassword(email: any) {
+  console.log(email);
   return getOneUserByEmail(email).then((user: any) => {
     sendEmail({
       from: "noreply@siunt.io",
-      to: `${email}`,
+      to: `vainius.vilkelis@stud.vgtu.lt`,
       subject: `Slaptažodžio pakeitimas`,
       html: `
         <p>Sveiki, \n norėdami pakeisti slaptažodį, paspauskite žemiau esančią nuorodą. \n \n </p>
@@ -307,4 +326,9 @@ export {
   changePassword,
   assignParcelToUser,
   forgotPassword,
+  getOneReview,
+  getOneUserByEmail,
+  assignReviewToUser,
+  checkIfEmailTaken,
+  sendContactInfo2,
 };

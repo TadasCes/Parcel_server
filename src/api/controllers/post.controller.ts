@@ -17,10 +17,37 @@ async function getAllPosts() {
     });
 }
 
+async function getAllUserPosts(id) {
+  return await Post.find({ authorId: id })
+    .sort({ timeStart: "asc" })
+    .then((result) => {
+      return result;
+    })
+    .catch(() => {
+      throw new HttpException(404, "No results");
+    });
+}
+
 async function getFilteredPosts(query: any) {
   console.log(query);
   return await Post.aggregate([
     {
+      // $project: {
+      //   post: {
+      //     $filter: {
+      //       input: "$post",
+      //       as: "post",
+      //       cond: {
+      //         $eq: [
+      //           "$cityStart", "Kaunas" ,
+      //           { cityEnd: query.cityEnd },
+      //           { day: query.date },
+      //           { type: query.type },
+      //         ],
+      //       },
+      //     },
+      //   },
+      // },
       $match: {
         $and: [
           { cityStart: query.cityStart },
@@ -35,7 +62,8 @@ async function getFilteredPosts(query: any) {
       console.log(result);
       return result;
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error);
       throw new HttpException(404, "No results");
     });
 }
@@ -73,8 +101,10 @@ async function createPost(newPost: IPost) {
 }
 
 async function updatePost(id: string, post: IPost) {
+  console.log(post);
   return await Post.findOneAndUpdate({ _id: id }, post)
-    .then(() => {
+    .then((result) => {
+      console.log(result);
       return "Post updated successfully!";
     })
     .catch(() => {
@@ -88,7 +118,7 @@ async function deletePost(id: string) {
       return "Post deleted successfully!";
     })
     .catch(() => {
-      throw new HttpException(404, "No such user");
+      throw new HttpException(404, "No such post");
     });
 }
 
@@ -102,6 +132,26 @@ async function seenCount(id: string) {
   });
 }
 
+async function deactivatePost(id: string) {
+  return await Post.findOneAndUpdate(
+    { _id: id },
+    { isActive: false },
+    { new: true }
+  ).then(() => {
+    return "Deactivated";
+  });
+}
+
+async function activatePost(id: string) {
+  return await Post.findOneAndUpdate(
+    { _id: id },
+    { isActive: true },
+    { new: true }
+  ).then(() => {
+    return "Activated";
+  });
+}
+
 export {
   getAllPosts,
   getOnePost,
@@ -110,4 +160,7 @@ export {
   deletePost,
   getFilteredPosts,
   seenCount,
+  getAllUserPosts,
+  activatePost,
+  deactivatePost,
 };
